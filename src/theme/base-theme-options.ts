@@ -198,7 +198,7 @@ export const baseThemeOptions: ThemeOptions = {
     },
     MuiSwitch: {
       defaultProps: {
-        color: 'primary'
+        color: 'info'
       }
     },
     MuiTab: {
