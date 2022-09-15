@@ -3,13 +3,16 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { calendarApi } from '../__fake-api__/calendar-api';
 import type { AppThunk } from '../store';
 import type { CalendarEvent } from '../types/calendar';
+import { User } from 'src/types/user';
 
 interface CalendarState {
   events: CalendarEvent[];
+  users:  User[]
 }
 
 const initialState: CalendarState = {
-  events: []
+  events: [],
+  users:  []
 };
 
 const slice = createSlice({
@@ -21,6 +24,12 @@ const slice = createSlice({
       action: PayloadAction<CalendarEvent[]>
     ): void {
       state.events = action.payload;
+    },
+    getUsers(
+      state: CalendarState,
+      action: PayloadAction<User[]>
+    ): void {
+      state.users = action.payload;
     },
     createEvent(
       state: CalendarState,
@@ -81,4 +90,10 @@ export const deleteEvent = (eventId: string): AppThunk => async (dispatch): Prom
   await calendarApi.deleteEvent(eventId);
 
   dispatch(slice.actions.deleteEvent(eventId));
+};
+
+export const getUsers = (): AppThunk => async (dispatch): Promise<void> => {
+  const data = await calendarApi.getUsers();
+
+  dispatch(slice.actions.getUsers(data));
 };
