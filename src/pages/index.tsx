@@ -3,7 +3,7 @@ import "@fullcalendar/daygrid/main.css";
 import "@fullcalendar/timegrid/main.css";
 import "@fullcalendar/list/main.css";
 import "@fullcalendar/timeline/main.css";
-import { useState, useRef, useEffect, useCallback, Fragment } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import FullCalendar from "@fullcalendar/react";
@@ -23,11 +23,14 @@ import { useDispatch, useSelector } from "src/store";
 import { CalendarView } from "src/types/calendar";
 import { Header } from "src/components/header/header";
 import Map from "src/components/map/map";
-import { CalendarEventTooltip } from "src/components/calendar/calendar-event-tooltip";
 import CalendarUserList from "src/components/calendar/calendar-user-list";
+import CalendarEvent from "src/components/calendar/calendar-event";
+import { CalendarEventTooltip } from "src/components/calendar/calendar-event-tooltip";
 
 const FullCalendarWrapper = styled("div")(({ theme }) => ({
   marginTop: theme.spacing(3),
+  "& .fc-event-main": { padding: 0 },
+  "& .fc-event .fc-bg": { opacity: "0 !important" },
   "& .fc-license-message": {
     display: "none",
   },
@@ -57,7 +60,6 @@ const FullCalendarWrapper = styled("div")(({ theme }) => ({
   },
   "& .fc-daygrid-event": {
     borderRadius: theme.shape.borderRadius,
-    padding: "0px 4px",
     fontSize: theme.typography.subtitle2.fontSize,
     fontWeight: theme.typography.subtitle2.fontWeight,
     lineHeight: theme.typography.subtitle2.lineHeight,
@@ -67,16 +69,18 @@ const FullCalendarWrapper = styled("div")(({ theme }) => ({
     fontWeight: theme.typography.body2.fontWeight,
     lineHeight: theme.typography.body2.lineHeight,
   },
-  "& .fc-daygrid-day-frame": {
-    padding: "12px",
+  "& .fc-event-main-frame": {
+    padding: 0,
   },
+  "& .fc-h-event": { border: 0 },
+  "& .fc-timegrid-event": { background: "red" },
 }));
 
 const Calendar: NextPage = () => {
   const dispatch = useDispatch();
   const calendarRef = useRef<FullCalendar | null>(null);
   const smDown = useMediaQuery((theme: Theme) => theme.breakpoints.down("sm"));
-  const { events,users } = useSelector((state) => state.calendar);
+  const { events, users } = useSelector((state) => state.calendar);
   const [date, setDate] = useState<Date>(new Date());
   const [view, setView] = useState<CalendarView>(
     smDown ? "timeGridDay" : "dayGridMonth"
@@ -244,24 +248,11 @@ const Calendar: NextPage = () => {
     }
   };
 
-  function renderInnerContent(innerProps) {
-    return (
-      <div className="fc-event-main-frame">
-        {innerProps.timeText && (
-          <div className="fc-event-time">{innerProps.timeText}</div>
-        )}
-        <div className="fc-event-title-container">
-          <div className="fc-event-title fc-sticky">
-            {innerProps.event.title || <Fragment>&nbsp;</Fragment>}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   const renderEventContent = (arg) => (
     <CalendarEventTooltip itemProps={arg}>
-      {renderInnerContent(arg)}
+      <div>
+        <CalendarEvent eventProps={arg} />
+      </div>
     </CalendarEventTooltip>
   );
   return (
@@ -278,7 +269,7 @@ const Calendar: NextPage = () => {
           py: 8,
         }}
       >
-        <CalendarUserList users={users}/>
+        <CalendarUserList users={users} />
         <Box
           sx={{
             display: "flex",

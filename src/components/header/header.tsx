@@ -3,6 +3,7 @@ import type { FC } from "react";
 import { styled } from "@mui/material/styles";
 import { FormControlLabel, Switch, Typography } from "@mui/material";
 import { format } from "date-fns";
+import { blue } from "@mui/material/colors";
 
 interface HeaderProps {
   mapViewChecked: boolean;
@@ -13,7 +14,7 @@ const HeaderContainer = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
   padding: theme.spacing(4),
-  backgroundColor: '#ebf3f7',
+  backgroundColor: theme.palette.mode === "light" ? blue[50] : blue[900],
 }));
 
 export const Header: FC<HeaderProps> = ({

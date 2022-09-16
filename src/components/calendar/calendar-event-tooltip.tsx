@@ -26,9 +26,9 @@ const CalendarTooltip = styled(({ className, ...props }: TooltipProps) => (
   />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.common.white,
-    color: theme.palette.common.black,
     minWidth: 350,
+    padding: theme.spacing(0),
+    color: theme.palette.common.black,
     fontSize: theme.typography.pxToRem(12),
   },
 }));
@@ -63,7 +63,7 @@ export const CalendarEventTooltip: FC<CalendarEventTooltipProps> = ({
 
   const ToolTipContent = () => {
     return (
-      <Paper elevation={10} sx={{ py: 1 }}>
+      <Paper elevation={14} sx={{ py: 1 }}>
         <Stack flexDirection="row" justifyContent="space-between">
           <Text variant="subtitle2" color="InactiveCaptionText">
             9:30 AM - 10:30 AM
