@@ -76,6 +76,30 @@ const FullCalendarWrapper = styled("div")(({ theme }) => ({
   "& .fc-timegrid-event": { background: "red" },
 }));
 
+const MapWrapper = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "calendarView",
+})<{ calendarView?: boolean }>(({ calendarView }) => ({
+  position: "absolute",
+  top: 0,
+  right: 0,
+  height: "100%",
+  width: calendarView ? "60%" : "100%",
+  zIndex: 100,
+}));
+
+const UserListWrapper = styled(Box)(() => ({
+  position: "relative",
+  width: "200px",
+  backgroundColor: "background.paper",
+}));
+const CalendarContainer = styled(Box)(() => ({
+  height: "100%",
+  width: "100%",
+  display: "flex",
+  position: "relative",
+  overflow: "hidden",
+}));
+
 const Calendar: NextPage = () => {
   const dispatch = useDispatch();
   const calendarRef = useRef<FullCalendar | null>(null);
@@ -235,8 +259,6 @@ const Calendar: NextPage = () => {
   const [showMapView, setShowMapView] = useState<boolean>(false);
   const [calenderView, setCalendarView] = useState<boolean>(true);
 
-  const mapViewWidth = "60%";
-
   const toggleMapView = () => setShowMapView((prev) => !prev);
 
   const onClickMapExpand = () => {
@@ -255,79 +277,89 @@ const Calendar: NextPage = () => {
       </div>
     </CalendarEventTooltip>
   );
+
   return (
     <>
       <Head>
         <title>Dashboard: Calendar | Material Kit Pro</title>
       </Head>
       <Header mapViewChecked={showMapView} onChangeMapView={toggleMapView} />
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: "background.paper",
-          display: "flex",
-          py: 8,
-        }}
-      >
-        <CalendarUserList users={users} />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: calenderView ? 1 : 0,
-            width: calenderView ? "auto" : 0,
-          }}
-        >
-          <CalendarToolbar
-            date={date}
-            onAddClick={handleAddClick}
-            onDateNext={handleDateNext}
-            onDatePrev={handleDatePrev}
-            onDateToday={handleDateToday}
-            onViewChange={handleViewChange}
-            view={view}
-            mobile={smDown}
-          />
-          <FullCalendarWrapper>
-            <FullCalendar
-              allDayMaintainDuration
-              dayMaxEventRows={3}
-              droppable
-              editable
-              eventContent={renderEventContent}
-              eventClick={handleEventSelect}
-              eventDisplay="block"
-              eventDrop={handleEventDrop}
-              eventResizableFromStart
-              eventResize={handleEventResize}
-              events={events}
-              headerToolbar={false}
-              height={800}
-              initialDate={date}
-              initialView={view}
-              plugins={[
-                dayGridPlugin,
-                interactionPlugin,
-                listPlugin,
-                timeGridPlugin,
-                timelinePlugin,
-              ]}
-              ref={calendarRef}
-              rerenderDelay={10}
-              select={handleRangeSelect}
-              selectable
-              weekends
-            />
-          </FullCalendarWrapper>
-        </Box>
-        <Box
-          sx={{
-            width: showMapView ? mapViewWidth : "0%",
-            flexGrow: showMapView ? 1 : 0,
-          }}
-        >
-          <Map isMapExpand={!calenderView} onClickExpand={onClickMapExpand} />
-        </Box>
+      <Box sx={{ display: "flex", maxWidth: "100%" }}>
+        <UserListWrapper>
+          <CalendarUserList users={users} />
+        </UserListWrapper>
+        <CalendarContainer>
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: "background.paper",
+              display: "flex",
+              py: 4,
+              width: calenderView ? (showMapView ? "40%" : "100%") : 0,
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              position: "relative",
+            }}
+          >
+            <Box
+              sx={{
+                flexGrow: 1,
+                minWidth: showMapView ? "calc(100vw - 200px)" : "", //if maps is open true
+                width: "100%", //if map is closed
+              }}
+            >
+              <CalendarToolbar
+                date={date}
+                onAddClick={handleAddClick}
+                onDateNext={handleDateNext}
+                onDatePrev={handleDatePrev}
+                onDateToday={handleDateToday}
+                onViewChange={handleViewChange}
+                view={view}
+                mobile={smDown}
+              />
+              <FullCalendarWrapper>
+                <FullCalendar
+                  allDayMaintainDuration
+                  dayMaxEventRows={3}
+                  droppable
+                  editable
+                  eventContent={renderEventContent}
+                  eventClick={handleEventSelect}
+                  eventDisplay="block"
+                  eventDrop={handleEventDrop}
+                  eventResizableFromStart
+                  eventResize={handleEventResize}
+                  events={events}
+                  headerToolbar={false}
+                  height={800}
+                  initialDate={date}
+                  initialView={view}
+                  plugins={[
+                    dayGridPlugin,
+                    interactionPlugin,
+                    listPlugin,
+                    timeGridPlugin,
+                    timelinePlugin,
+                  ]}
+                  ref={calendarRef}
+                  rerenderDelay={10}
+                  select={handleRangeSelect}
+                  selectable
+                  weekends
+                />
+              </FullCalendarWrapper>
+            </Box>
+          </Box>
+          {showMapView && (
+            <MapWrapper calendarView={calenderView}>
+              <Map
+                isMapExpand={!calenderView}
+                onClickExpand={onClickMapExpand}
+              />
+            </MapWrapper>
+          )}
+        </CalendarContainer>
       </Box>
       <CalendarEventDialog
         event={selectedEvent}

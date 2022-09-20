@@ -31,8 +31,6 @@ const TextWithIconContainer = styled(Stack)(({ theme }) => ({
   alignItems: "center",
 }));
 const CalendarEvent: FC<CalendarEventProps> = ({ eventProps }) => {
-  console.log("Event Props", eventProps.event._def.title);
-
   return (
     <EventBox borderColor={eventProps?.borderColor}>
       <TextWithIconContainer>

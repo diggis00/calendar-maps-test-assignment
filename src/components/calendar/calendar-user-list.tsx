@@ -11,13 +11,14 @@ interface CalendarUserListProps {
 
 const List = styled(Box)(({ theme }) => ({
   width: 200,
-  padding: theme.spacing(4, 0),
+  margin: theme.spacing(8, 0),
+  padding: theme.spacing(10, 0),
 }));
 
 const UserContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  padding: theme.spacing(4, 2),
+  padding: theme.spacing(6, 2),
   fontSize: 14,
 }));
 
